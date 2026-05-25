@@ -1,15 +1,18 @@
-package com.example.mixin;
+package com.example.randomizer.mixin;
 
-import net.minecraft.server.MinecraftServer;
+import com.example.randomizer.RandomizerMod;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.world.gen.structure.Structure;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(MinecraftServer.class)
-public class ExampleMixin {
-	@Inject(at = @At("HEAD"), method = "loadLevel")
-	private void init(CallbackInfo info) {
-		// This code is injected into the start of MinecraftServer.loadLevel()V
-	}
+@Mixin(Structure.class)
+public class StructureMixin {
+
+    @ModifyVariable(method = "postPlace", at = @At("HEAD"), argsOnly = true)
+    private static RegistryEntry<Structure> injectRandomStructure(RegistryEntry<Structure> original) {
+        // Intercepts the structure generation reference and swaps it
+        return RandomizerMod.getShuffledStructure(original);
+    }
 }
